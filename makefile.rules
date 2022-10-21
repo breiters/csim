@@ -1,0 +1,21 @@
+CXX           := g++
+TOOL_ROOTS    := csim
+TOOL_CXXFLAGS += -std=c++14 -g -latomic -O3 -fno-strict-aliasing
+# TOOL_CXXFLAGS += -DNDEBUG
+
+# ================================================================
+# Build the intermediate object files for csim.
+# ================================================================
+$(OBJDIR)csim$(OBJ_SUFFIX): csim.cpp cache.h
+	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+
+# ================================================================
+# Build the csim tool as a dll (shared object).
+# ================================================================
+$(OBJDIR)csim$(PINTOOL_SUFFIX): \
+		$(OBJDIR)csim$(OBJ_SUFFIX) \
+		# $(OBJDIR)cache$(OBJ_SUFFIX)
+	$(LINKER) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $(^:%.h=) $(TOOL_LPATHS) $(TOOL_LIBS)
+
+cleandir:
+	rm -f csim *~
